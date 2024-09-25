@@ -22,10 +22,13 @@ ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()
                        )
 #endif
 {
+    mix = new juce::AudioParameterFloat("mix", "mix", 0.0f, 1.0f, 0.8f);
+    addParameter(mix);
 }
 
 ConvolutionVerbAudioProcessor::~ConvolutionVerbAudioProcessor()
 {
+    
 }
 
 //==============================================================================

@@ -48,8 +48,7 @@ void ConvolutionVerbAudioProcessorEditor::paint (juce::Graphics& g)
 void ConvolutionVerbAudioProcessorEditor::resized()
 {
 
-	dryWetSlider.setBounds(10, 10, 100, 100);
-	dryWetLabel.setBounds(10, 110, 100, 20);
+	dryWetSlider.setBounds(50, 50, 100, 100);
 
 
     // This is generally where you'll want to lay out the positions of any
