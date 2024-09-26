@@ -10,6 +10,8 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "components/ImpulseResponseLoader.h"
+
 
 //==============================================================================
 /**
@@ -17,6 +19,7 @@
 class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
+    
     ConvolutionVerbAudioProcessorEditor (ConvolutionVerbAudioProcessor&);
     ~ConvolutionVerbAudioProcessorEditor() override;
 
@@ -31,6 +34,8 @@ private:
 
 	juce::Slider dryWetSlider;
 	juce::Label dryWetLabel;
+
+	ImpulseResponseLoader impulseResponseLoader;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConvolutionVerbAudioProcessorEditor)
 };
