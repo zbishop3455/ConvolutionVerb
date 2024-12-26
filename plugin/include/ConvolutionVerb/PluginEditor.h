@@ -9,16 +9,12 @@
 #pragma once
 
 #include "PluginProcessor.h"
-// #include "components/ImpulseResponseLoader.h"
+#include "ImpulseResponseLoader.h"
 
+class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor {
 
-//==============================================================================
-/**
-*/
-class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor
-{
-public:
-    
+  public:
+
     ConvolutionVerbAudioProcessorEditor (ConvolutionVerbAudioProcessor&);
     ~ConvolutionVerbAudioProcessorEditor() override;
 
@@ -26,15 +22,15 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-private:
+  private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     ConvolutionVerbAudioProcessor& audioProcessor;
 
-	juce::Slider dryWetSlider;
-	juce::Label dryWetLabel;
+    juce::Slider dryWetSlider;
+    juce::Label dryWetLabel;
 
-	// ImpulseResponseLoader impulseResponseLoader;
+    // ImpulseResponseLoader impulseResponseLoader;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConvolutionVerbAudioProcessorEditor)
 };

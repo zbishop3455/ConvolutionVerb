@@ -8,7 +8,7 @@
 
 #include "ConvolutionVerb/PluginProcessor.h"
 #include "ConvolutionVerb/PluginEditor.h"
-// #include "components/ImpulseResponseLoader.h"
+#include "ConvolutionVerb/ImpulseResponseLoader.h"
 
 //==============================================================================
 ConvolutionVerbAudioProcessorEditor::ConvolutionVerbAudioProcessorEditor (ConvolutionVerbAudioProcessor& p)
@@ -48,7 +48,7 @@ void ConvolutionVerbAudioProcessorEditor::paint (juce::Graphics& g)
 void ConvolutionVerbAudioProcessorEditor::resized()
 {
 
-	dryWetSlider.setBounds(100, 300, 100, 100);
+	dryWetSlider.setBounds(10, 300, 100, 100);
 	//impulseResponseLoader.setBounds(0, 0, getWidth(), (getHeight() / 2) );
 
 
