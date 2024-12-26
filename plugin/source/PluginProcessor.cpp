@@ -6,8 +6,8 @@
   ==============================================================================
 */
 
-#include "PluginProcessor.h"
-#include "PluginEditor.h"
+#include "ConvolutionVerb/PluginProcessor.h"
+#include "ConvolutionVerb/PluginEditor.h"
 
 //==============================================================================
 ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()

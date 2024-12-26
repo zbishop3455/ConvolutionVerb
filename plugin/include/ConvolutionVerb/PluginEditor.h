@@ -8,9 +8,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "components/ImpulseResponseLoader.h"
+// #include "components/ImpulseResponseLoader.h"
 
 
 //==============================================================================
@@ -35,7 +34,7 @@ private:
 	juce::Slider dryWetSlider;
 	juce::Label dryWetLabel;
 
-	ImpulseResponseLoader impulseResponseLoader;
+	// ImpulseResponseLoader impulseResponseLoader;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConvolutionVerbAudioProcessorEditor)
 };

@@ -1,8 +1,7 @@
 
-# Mandatory line, sets the minimum version of CMake that should be used with this repository.
-# I specified 3.22 because I trust it. However, currently I have 3.26 installed on my machine.
-# To verify your version run
-# $ cmake --version
+# Shout out to this template for setting up CMake projects! 
+# https://github.com/JanWilczek/audio-plugin-template/tree/main
+
 cmake_minimum_required(VERSION 3.31)
 
 # Sets a few variables, like PROJECT_NAME

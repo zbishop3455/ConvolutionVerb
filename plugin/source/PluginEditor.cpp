@@ -6,9 +6,9 @@
   ==============================================================================
 */
 
-#include "PluginProcessor.h"
-#include "PluginEditor.h"
-#include "components/ImpulseResponseLoader.h"
+#include "ConvolutionVerb/PluginProcessor.h"
+#include "ConvolutionVerb/PluginEditor.h"
+// #include "components/ImpulseResponseLoader.h"
 
 //==============================================================================
 ConvolutionVerbAudioProcessorEditor::ConvolutionVerbAudioProcessorEditor (ConvolutionVerbAudioProcessor& p)
@@ -18,7 +18,7 @@ ConvolutionVerbAudioProcessorEditor::ConvolutionVerbAudioProcessorEditor (Convol
     setSize (854, 480);
 
 	// Add the impulse response loader
-	addAndMakeVisible(impulseResponseLoader);
+	//addAndMakeVisible(impulseResponseLoader);
 
 	// Setup the dry / wet slider
     addAndMakeVisible(dryWetSlider);
@@ -49,7 +49,7 @@ void ConvolutionVerbAudioProcessorEditor::resized()
 {
 
 	dryWetSlider.setBounds(100, 300, 100, 100);
-	impulseResponseLoader.setBounds(0, 0, getWidth(), (getHeight() / 2) );
+	//impulseResponseLoader.setBounds(0, 0, getWidth(), (getHeight() / 2) );
 
 
     // This is generally where you'll want to lay out the positions of any
