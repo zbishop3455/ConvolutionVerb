@@ -22,15 +22,18 @@ ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-                       apvts(*this, nullptr, "Parameters", createParameterLayout())
+                       apvts(*this, nullptr, "Parameters", createParameterLayout()),
+                       dryWetMixer()
 #endif
 {
+
+    dryWetMixer.setMixingRule(juce::dsp::DryWetMixingRule::linear);
 
 }
 
 ConvolutionVerbAudioProcessor::~ConvolutionVerbAudioProcessor()
 {
-    // delete parameters;
+
 }
 
 //==============================================================================
@@ -150,35 +153,25 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    
-    float mix = apvts.getRawParameterValue("MIX")->load(); 
+    float mix = apvts.getRawParameterValue("MIX")->load();
+    dryWetMixer.setWetMixProportion(mix);
+    dryWetMixer.pushDrySamples(buffer);
 
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
 
-        // Copy the dry signal
-        juce::AudioBuffer<float> dryBuffer;
-        dryBuffer.makeCopyOf(buffer);
-
         auto* channelData = buffer.getWritePointer(channel);
-        auto* dryChannelData = dryBuffer.getWritePointer(channel);
 
         // Temp wet signal - not sure what this will do 
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
             channelData[sample] = sinf(2.0 * 3.14f * 440.0 * sample / 44100.0);
         }
-
-        // Mix Dry and Wet (linear interpolation)
-        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
-            channelData[sample] = 
-            (1.0f - mix) * dryChannelData[sample] + 
-            mix * channelData[sample];
-        }
+        
         
         // Done :D 
     }
 
-
+    dryWetMixer.mixWetSamples(buffer);
 }
 
 //==============================================================================

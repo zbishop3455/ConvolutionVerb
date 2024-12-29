@@ -9,6 +9,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_dsp/juce_dsp.h>
 
 class ConvolutionVerbAudioProcessor  : public juce::AudioProcessor
 {
@@ -16,7 +17,6 @@ public:
     //==============================================================================
     ConvolutionVerbAudioProcessor();
     ~ConvolutionVerbAudioProcessor() override;
-
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -27,18 +27,15 @@ public:
 
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
-    //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
 
-    //==============================================================================
     const juce::String getName() const override;
 
     bool acceptsMidi() const override;
     bool producesMidi() const override;
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
-
 
     int getNumPrograms() override;
     int getCurrentProgram() override;
@@ -51,12 +48,14 @@ public:
 
     //==============================================================================
 
-    // Parameters
+    // Parameter Tree=
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     
 
 private:
+
+    juce::dsp::DryWetMixer<float> dryWetMixer;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ConvolutionVerbAudioProcessor)
