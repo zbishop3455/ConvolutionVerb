@@ -22,9 +22,12 @@ ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-                       apvts(*this, nullptr, "Parameters", createParameterLayout()),
+                        apvts(*this, nullptr, "Parameters", createParameterLayout()),
                         convolution(),
-                       dryWetMixer()
+                        leftChain(),
+                        rightChain(),
+                        dryWetMixer()
+
 
 #endif
 {
@@ -100,12 +103,6 @@ void ConvolutionVerbAudioProcessor::changeProgramName (int index, const juce::St
 {
 }
 
-//==============================================================================
-void ConvolutionVerbAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
-{
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-}
 
 void ConvolutionVerbAudioProcessor::releaseResources()
 {
@@ -140,6 +137,25 @@ bool ConvolutionVerbAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 #endif
 
 
+//==============================================================================
+void ConvolutionVerbAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+{
+
+    auto dir = juce::File::getCurrentWorkingDirectory();
+    juce::File fileImpulseResponse = dir.getChildFile("assets").getChildFile("ir_reverb_1.wav");
+    convolution.loadImpulseResponse(fileImpulseResponse, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0);
+
+    juce::dsp::ProcessSpec spec;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.sampleRate = sampleRate;
+    spec.numChannels = 1;
+
+    leftChain.prepare(spec);
+    rightChain.prepare(spec);
+
+}
+
+
 void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -159,18 +175,20 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     dryWetMixer.setWetMixProportion(mix);
     dryWetMixer.pushDrySamples(buffer);
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
+    // Wrap the buffer in an AudioBlock
+    juce::dsp::AudioBlock<float> block(buffer);
 
-        auto* channelData = buffer.getWritePointer(channel);
+    // Extract left and right channels
+    juce::dsp::AudioBlock<float> leftBlock = block.getSingleChannelBlock(0);
+    juce::dsp::AudioBlock<float> rightBlock = block.getSingleChannelBlock(1);
 
-        // Temp wet signal - not sure what this will do 
-        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
-            channelData[sample] = sinf(2.0 * 3.14f * 440.0 * sample / 44100.0);
-        }
-        
-        // Done :D 
-    }
+    // Wrap the blocks in a ProcessContextReplacing
+    juce::dsp::ProcessContextReplacing<float> contextLeft(leftBlock);
+    juce::dsp::ProcessContextReplacing<float> contextRight(rightBlock);
+
+    // Process the convolution
+    convolution.process(contextLeft);
+    convolution.process(contextRight);
 
     dryWetMixer.mixWetSamples(buffer);
 }
