@@ -23,7 +23,9 @@ ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()
                      #endif
                        ),
                        apvts(*this, nullptr, "Parameters", createParameterLayout()),
+                        convolution(),
                        dryWetMixer()
+
 #endif
 {
 
@@ -167,7 +169,6 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
             channelData[sample] = sinf(2.0 * 3.14f * 440.0 * sample / 44100.0);
         }
         
-        
         // Done :D 
     }
 
@@ -180,6 +181,7 @@ bool ConvolutionVerbAudioProcessor::hasEditor() const
     return true;
 }
 
+
 juce::AudioProcessorEditor* ConvolutionVerbAudioProcessor::createEditor()
 {
     return new ConvolutionVerbAudioProcessorEditor (*this);
@@ -191,16 +193,37 @@ void ConvolutionVerbAudioProcessor::getStateInformation (juce::MemoryBlock& dest
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    // juce::MemoryOutputStream (destData, true).writeFloat (*mix);
+
+    auto state = apvts.copyState();
+    std::unique_ptr<juce::XmlElement> xml (state.createXml());
+
+    if (xml == nullptr) {
+        throw new std::runtime_error("Failed to create XML from state");
+    }
+
+    copyXmlToBinary(*xml, destData);
+    
 }
 
 void ConvolutionVerbAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    // *mix = juce::MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat();
+
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+    apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+    
 }
 
+//==============================================================================
+// This creates new instances of the plugin..
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+{
+    return new ConvolutionVerbAudioProcessor();
+}
+
+// Defines parameters for the plugin
 juce::AudioProcessorValueTreeState::ParameterLayout ConvolutionVerbAudioProcessor::createParameterLayout()
 {
 
@@ -210,11 +233,4 @@ juce::AudioProcessorValueTreeState::ParameterLayout ConvolutionVerbAudioProcesso
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Dry / Wet", 0.0f, 1.0f, 0.5f));
 
     return { parameters.begin(), parameters.end() };
-}
-
-//==============================================================================
-// This creates new instances of the plugin..
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
-    return new ConvolutionVerbAudioProcessor();
 }

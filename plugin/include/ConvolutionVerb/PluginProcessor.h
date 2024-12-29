@@ -48,9 +48,11 @@ public:
 
     //==============================================================================
 
-    // Parameter Tree=
+    // Parameter Tree
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+    juce::dsp::Convolution convolution;
     
 
 private:
