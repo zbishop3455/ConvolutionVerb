@@ -1,10 +1,3 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin editor.
-
-  ==============================================================================
-*/
 
 #include "ConvolutionVerb/PluginProcessor.h"
 #include "ConvolutionVerb/PluginEditor.h"
@@ -15,20 +8,23 @@ ConvolutionVerbAudioProcessorEditor::ConvolutionVerbAudioProcessorEditor (Convol
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
 
-    setSize (854, 480);
+    setSize(854, 480);
 
 	// Add the impulse response loader
 	//addAndMakeVisible(impulseResponseLoader);
 
 	// Setup the dry / wet slider
-    addAndMakeVisible(dryWetSlider);
-    dryWetSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    dryWetSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
-    dryWetSlider.setRange(0.0, 1.0, 0.01);
+    addAndMakeVisible(mixSlider);
+    mixSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+    mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
+    mixSlider.setRange(0.0, 1.0, 0.01);
 
-	addAndMakeVisible(dryWetLabel);
-	dryWetLabel.setText("Dry / Wet", juce::dontSendNotification);
-	dryWetLabel.attachToComponent(&dryWetSlider, false);
+    // Attach the slider to the processor
+    mixSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "MIX", mixSlider);
+
+	addAndMakeVisible(mixSliderLabel);
+	mixSliderLabel.setText("Dry / Wet", juce::dontSendNotification);
+	mixSliderLabel.attachToComponent(&mixSlider, false);
 
 
 }
@@ -37,7 +33,7 @@ ConvolutionVerbAudioProcessorEditor::~ConvolutionVerbAudioProcessorEditor()
 {
 }
 
-//==============================================================================
+
 void ConvolutionVerbAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
@@ -45,13 +41,14 @@ void ConvolutionVerbAudioProcessorEditor::paint (juce::Graphics& g)
 
 }
 
+
 void ConvolutionVerbAudioProcessorEditor::resized()
 {
 
-	dryWetSlider.setBounds(10, 300, 100, 100);
-	//impulseResponseLoader.setBounds(0, 0, getWidth(), (getHeight() / 2) );
-
-
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+
+	mixSlider.setBounds(10, 300, 100, 100);
+	//impulseResponseLoader.setBounds(0, 0, getWidth(), (getHeight() / 2) );
+
 }

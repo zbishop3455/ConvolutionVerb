@@ -6,8 +6,10 @@
   ==============================================================================
 */
 
+
 #include "ConvolutionVerb/PluginProcessor.h"
 #include "ConvolutionVerb/PluginEditor.h"
+
 
 //==============================================================================
 ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()
@@ -19,16 +21,16 @@ ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+                       apvts(*this, nullptr, "Parameters", createParameterLayout())
 #endif
 {
-    mix = new juce::AudioParameterFloat("mix", "mix", 0.0f, 1.0f, 0.8f);
-    addParameter(mix);
+
 }
 
 ConvolutionVerbAudioProcessor::~ConvolutionVerbAudioProcessor()
 {
-    
+    // delete parameters;
 }
 
 //==============================================================================
@@ -132,6 +134,7 @@ bool ConvolutionVerbAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 }
 #endif
 
+
 void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
@@ -147,24 +150,41 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
+    
+    float mix = apvts.getRawParameterValue("MIX")->load(); 
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
+        // Copy the dry signal
+        juce::AudioBuffer<float> dryBuffer;
+        dryBuffer.makeCopyOf(buffer);
+
+        auto* channelData = buffer.getWritePointer(channel);
+        auto* dryChannelData = dryBuffer.getWritePointer(channel);
+
+        // Temp wet signal - not sure what this will do 
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+            channelData[sample] = sinf(2.0 * 3.14f * 440.0 * sample / 44100.0);
+        }
+
+        // Mix Dry and Wet (linear interpolation)
+        for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+            channelData[sample] = 
+            (1.0f - mix) * dryChannelData[sample] + 
+            mix * channelData[sample];
+        }
+        
+        // Done :D 
     }
+
+
 }
 
 //==============================================================================
 bool ConvolutionVerbAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 juce::AudioProcessorEditor* ConvolutionVerbAudioProcessor::createEditor()
@@ -178,12 +198,25 @@ void ConvolutionVerbAudioProcessor::getStateInformation (juce::MemoryBlock& dest
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    // juce::MemoryOutputStream (destData, true).writeFloat (*mix);
 }
 
 void ConvolutionVerbAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    // *mix = juce::MemoryInputStream (data, static_cast<size_t> (sizeInBytes), false).readFloat();
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout ConvolutionVerbAudioProcessor::createParameterLayout()
+{
+
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+
+    // Dry / Wet
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Dry / Wet", 0.0f, 1.0f, 0.5f));
+
+    return { parameters.begin(), parameters.end() };
 }
 
 //==============================================================================
