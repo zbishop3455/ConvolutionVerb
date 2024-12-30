@@ -143,6 +143,8 @@ void ConvolutionVerbAudioProcessor::prepareToPlay (double sampleRate, int sample
     spec.sampleRate = sampleRate;
     spec.numChannels = 2;
 
+    dryWetMixer.prepare(spec);
+
     convolution.reset();
     auto dir = juce::File::getCurrentWorkingDirectory();
     juce::File fileImpulseResponse = dir.getChildFile("assets").getChildFile("ir_reverb_1.wav");
@@ -158,44 +160,23 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
+    // Clear all the output channels
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    //float mix = apvts.getRawParameterValue("MIX")->load();
-    // mix = 0.0f;
-    // dryWetMixer.setWetMixProportion(mix);
-    // dryWetMixer.pushDrySamples(buffer);
+    float mix = apvts.getRawParameterValue("MIX")->load();
+    dryWetMixer.setWetMixProportion(mix);
+    dryWetMixer.pushDrySamples(buffer);
 
-    // Wrap the buffer in an AudioBlock
     juce::dsp::AudioBlock<float> block(buffer);
-
-    // Extract left and right channels
-    // juce::dsp::AudioBlock<float> leftBlock = block.getSingleChannelBlock(0);
-    // juce::dsp::AudioBlock<float> rightBlock = block.getSingleChannelBlock(1);
-
-    // Wrap the blocks in a ProcessContextReplacing
-    // juce::dsp::ProcessContextReplacing<float> contextLeft(leftBlock);
-    // juce::dsp::ProcessContextReplacing<float> contextRight(rightBlock);
-    
     juce::dsp::ProcessContextReplacing<float> context(block);
 
-    // Process the convolution
-    // convolution.process(contextLeft);
-    // convolution.process(contextRight);
+    // In case there is no impulse response loaded
+    if (convolution.getCurrentIRSize() > 0) {
+        convolution.process(context);
+    }
 
-    // if (convolution.getCurrentIRSize() > 0) {
-    //     convolution.process(context);
-    // }
-
-    convolution.process(context);
-
-    // dryWetMixer.mixWetSamples(buffer);
+    dryWetMixer.mixWetSamples(buffer);
 }
 
 //==============================================================================

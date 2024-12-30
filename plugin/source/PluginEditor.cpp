@@ -26,7 +26,6 @@ ConvolutionVerbAudioProcessorEditor::ConvolutionVerbAudioProcessorEditor (Convol
 	mixSliderLabel.setText("Dry / Wet", juce::dontSendNotification);
 	mixSliderLabel.attachToComponent(&mixSlider, false);
 
-
 }
 
 ConvolutionVerbAudioProcessorEditor::~ConvolutionVerbAudioProcessorEditor()
