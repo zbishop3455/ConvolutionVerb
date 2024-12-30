@@ -24,8 +24,6 @@ ConvolutionVerbAudioProcessor::ConvolutionVerbAudioProcessor()
                        ),
                         apvts(*this, nullptr, "Parameters", createParameterLayout()),
                         convolution(),
-                        leftChain(),
-                        rightChain(),
                         dryWetMixer()
 
 
@@ -140,18 +138,16 @@ bool ConvolutionVerbAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 //==============================================================================
 void ConvolutionVerbAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-
-    auto dir = juce::File::getCurrentWorkingDirectory();
-    juce::File fileImpulseResponse = dir.getChildFile("assets").getChildFile("ir_reverb_1.wav");
-    convolution.loadImpulseResponse(fileImpulseResponse, juce::dsp::Convolution::Stereo::no, juce::dsp::Convolution::Trim::no, 0);
-
     juce::dsp::ProcessSpec spec;
     spec.maximumBlockSize = samplesPerBlock;
     spec.sampleRate = sampleRate;
-    spec.numChannels = 1;
+    spec.numChannels = 2;
 
-    leftChain.prepare(spec);
-    rightChain.prepare(spec);
+    convolution.reset();
+    auto dir = juce::File::getCurrentWorkingDirectory();
+    juce::File fileImpulseResponse = dir.getChildFile("assets").getChildFile("ir_reverb_1.wav");
+    convolution.loadImpulseResponse(fileImpulseResponse, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+    convolution.prepare(spec);
 
 }
 
@@ -171,26 +167,35 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    float mix = apvts.getRawParameterValue("MIX")->load();
-    dryWetMixer.setWetMixProportion(mix);
-    dryWetMixer.pushDrySamples(buffer);
+    //float mix = apvts.getRawParameterValue("MIX")->load();
+    // mix = 0.0f;
+    // dryWetMixer.setWetMixProportion(mix);
+    // dryWetMixer.pushDrySamples(buffer);
 
     // Wrap the buffer in an AudioBlock
     juce::dsp::AudioBlock<float> block(buffer);
 
     // Extract left and right channels
-    juce::dsp::AudioBlock<float> leftBlock = block.getSingleChannelBlock(0);
-    juce::dsp::AudioBlock<float> rightBlock = block.getSingleChannelBlock(1);
+    // juce::dsp::AudioBlock<float> leftBlock = block.getSingleChannelBlock(0);
+    // juce::dsp::AudioBlock<float> rightBlock = block.getSingleChannelBlock(1);
 
     // Wrap the blocks in a ProcessContextReplacing
-    juce::dsp::ProcessContextReplacing<float> contextLeft(leftBlock);
-    juce::dsp::ProcessContextReplacing<float> contextRight(rightBlock);
+    // juce::dsp::ProcessContextReplacing<float> contextLeft(leftBlock);
+    // juce::dsp::ProcessContextReplacing<float> contextRight(rightBlock);
+    
+    juce::dsp::ProcessContextReplacing<float> context(block);
 
     // Process the convolution
-    convolution.process(contextLeft);
-    convolution.process(contextRight);
+    // convolution.process(contextLeft);
+    // convolution.process(contextRight);
 
-    dryWetMixer.mixWetSamples(buffer);
+    // if (convolution.getCurrentIRSize() > 0) {
+    //     convolution.process(context);
+    // }
+
+    convolution.process(context);
+
+    // dryWetMixer.mixWetSamples(buffer);
 }
 
 //==============================================================================
