@@ -135,7 +135,7 @@ bool ConvolutionVerbAudioProcessor::isBusesLayoutSupported (const BusesLayout& l
 #endif
 
 
-//==============================================================================
+// Called when DAW playback starts or when the sample rate changes
 void ConvolutionVerbAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     juce::dsp::ProcessSpec spec;

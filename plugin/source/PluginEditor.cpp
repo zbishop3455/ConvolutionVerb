@@ -8,7 +8,7 @@ ConvolutionVerbAudioProcessorEditor::ConvolutionVerbAudioProcessorEditor (Convol
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
 
-    setSize(854, 480);
+    setSize(800, 400);
 
 	// Add the impulse response loader
 	//addAndMakeVisible(impulseResponseLoader);
