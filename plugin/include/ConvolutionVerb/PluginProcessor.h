@@ -53,7 +53,6 @@ public:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     juce::dsp::Convolution convolution;
-    juce::dsp::ProcessorChain<juce::dsp::Convolution> leftChain, rightChain;
     
 
 private:

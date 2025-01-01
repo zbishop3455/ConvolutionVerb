@@ -40,6 +40,7 @@ target_include_directories(${PROJECT_NAME}
 # If you use one of the additional modules, like the DSP module, you need to specify it here.
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
+        ConvolutionVerbBinaryData
         juce::juce_audio_utils
         juce::juce_dsp
     PUBLIC

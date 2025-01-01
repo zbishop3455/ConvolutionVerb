@@ -9,6 +9,7 @@
 
 #include "ConvolutionVerb/PluginProcessor.h"
 #include "ConvolutionVerb/PluginEditor.h"
+#include "BinaryData.h"
 
 
 //==============================================================================
@@ -146,9 +147,16 @@ void ConvolutionVerbAudioProcessor::prepareToPlay (double sampleRate, int sample
     dryWetMixer.prepare(spec);
 
     convolution.reset();
-    auto dir = juce::File::getCurrentWorkingDirectory();
-    juce::File fileImpulseResponse = dir.getChildFile("assets").getChildFile("ir_reverb_1.wav");
-    convolution.loadImpulseResponse(fileImpulseResponse, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::no, 0, juce::dsp::Convolution::Normalise::yes);
+
+    // Load impulse response from binary data
+    juce::MemoryInputStream stream(BinaryData::ir_reverb_1_wav, BinaryData::ir_reverb_1_wavSize, false);
+    juce::WavAudioFormat wavFormat;
+    auto audioReader = wavFormat.createReaderFor(&stream, true);
+    juce::AudioBuffer<float> audioBuffer(audioReader->numChannels, audioReader->lengthInSamples);
+    double impulseSampleRate = audioReader->sampleRate;
+    audioReader->read(&audioBuffer, 0, audioReader->lengthInSamples, 0, true, true);
+
+    convolution.loadImpulseResponse(std::move(audioBuffer), impulseSampleRate, juce::dsp::Convolution::Stereo::yes, juce::dsp::Convolution::Trim::no, juce::dsp::Convolution::Normalise::yes);
     convolution.prepare(spec);
 
 }

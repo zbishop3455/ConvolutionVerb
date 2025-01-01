@@ -46,5 +46,8 @@ enable_testing()
 # Adds all the targets configured in the "plugin" folder.
 add_subdirectory(plugin)
 
+# Adds all the targets configured in the "assets" folder. This is where the impulse responses & images are stored.
+add_subdirectory(assets)
+
 # Adds all the targets configured in the "test" folder.
 add_subdirectory(test)
