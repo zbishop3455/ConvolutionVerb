@@ -3,7 +3,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 
-class ImpulseResponseLoader  : public juce::Component {
+class ImpulseResponseLoader : public juce::Component {
 public:
   ImpulseResponseLoader();
   ~ImpulseResponseLoader() override;

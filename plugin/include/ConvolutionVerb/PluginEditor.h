@@ -10,6 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "ImpulseResponseLoader.h"
+#include "CustomLookAndFeel.h"
 
 class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor {
 
@@ -30,6 +31,7 @@ class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor {
     juce::Slider mixSlider;
     juce::Label mixSliderLabel;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
+    CustomLookAndFeel lookAndFeel;
 
     // ImpulseResponseLoader impulseResponseLoader;
 
