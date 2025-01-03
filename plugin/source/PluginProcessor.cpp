@@ -176,6 +176,8 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     dryWetMixer.setWetMixProportion(mix);
     dryWetMixer.pushDrySamples(buffer);
 
+
+
     juce::dsp::AudioBlock<float> block(buffer);
     juce::dsp::ProcessContextReplacing<float> context(block);
 
@@ -185,6 +187,12 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     }
 
     dryWetMixer.mixWetSamples(buffer);
+
+    // Apply output volume
+    float outputGain = juce::Decibels::decibelsToGain(apvts.getRawParameterValue("OUTPUT")->load());
+    buffer.applyGain(outputGain);
+
+
 }
 
 //==============================================================================
@@ -241,8 +249,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout ConvolutionVerbAudioProcesso
 
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
+    // Input
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("INPUT", "Input", -12.0f, 12.0f, 0.25f));
+
     // Dry / Wet
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Dry / Wet", 0.0f, 1.0f, 0.5f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Dry / Wet", 0.0f, 1.0f, 0.25f));
+
+    // Output
+    juce::NormalisableRange<float> outputRange(-12.0f, 12.0f, 0.25f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT", "Output", outputRange, 0.0f));
 
     return { parameters.begin(), parameters.end() };
 }

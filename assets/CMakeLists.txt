@@ -9,7 +9,7 @@ project(ConvolutionVerb VERSION 0.1.0)
 # This lets us ship the entire plugin as a single VST file
 juce_add_binary_data( ConvolutionVerbBinaryData SOURCES
     ir/ir_reverb_1.wav
-    images/background.jpg
-    images/knob_1.jpg
+    images/background.png
+    images/knob_1.png
 
 )

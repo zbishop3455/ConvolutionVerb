@@ -28,10 +28,20 @@ class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor {
     // access the processor object that created it.
     ConvolutionVerbAudioProcessor& audioProcessor;
 
-    juce::Slider mixSlider;
-    juce::Label mixSliderLabel;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
     CustomLookAndFeel lookAndFeel;
+
+    juce::Slider inputKnob;
+    juce::Label inputKnobLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> inputKnobAttachment;
+
+    juce::Slider mixKnob;
+    juce::Label mixKnobLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixKnobAttachment;
+
+    juce::Slider outputKnob;
+    juce::Label outputKnobLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> outputKnobAttachment;
+
 
     // ImpulseResponseLoader impulseResponseLoader;
 

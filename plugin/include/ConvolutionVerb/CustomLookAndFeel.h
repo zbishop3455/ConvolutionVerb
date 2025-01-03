@@ -20,7 +20,9 @@ public:
     }
 
     void drawRotarySlider (juce::Graphics& g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override {
-        juce::Image rotaryImage = juce::ImageCache::getFromMemory(BinaryData::knob_1_jpg, BinaryData::knob_1_jpgSize)
+        
+        
+        juce::Image rotaryImage = juce::ImageCache::getFromMemory(BinaryData::knob_1_png, BinaryData::knob_1_pngSize)
         .rescaled(width, height, juce::Graphics::highResamplingQuality);
 
         //  rotate the image

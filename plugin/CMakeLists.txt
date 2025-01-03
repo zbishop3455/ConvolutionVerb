@@ -28,7 +28,7 @@ target_sources(${PROJECT_NAME}
         ${INCLUDE_DIR}/PluginEditor.h
         ${INCLUDE_DIR}/PluginProcessor.h
         ${INCLUDE_DIR}/ImpulseResponseLoader.h  
-        ${INCLUDE_DIR}/LookAndFeel.h
+        ${INCLUDE_DIR}/CustomLookAndFeel.h
 )
 
 # Sets the include directories of the plugin project.
