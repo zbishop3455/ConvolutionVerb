@@ -250,10 +250,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout ConvolutionVerbAudioProcesso
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
 
     // Input
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("INPUT", "Input", -12.0f, 12.0f, 0.25f));
+    juce::NormalisableRange<float> predelayRange(0.0f, 1000.0f, 10.0f);
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("PREDELAY", "PreDelay", predelayRange, 0.0f));
+
+    // Decay
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", 0.0f, 1.0f, 0.0f));
 
     // Dry / Wet
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Dry / Wet", 0.0f, 1.0f, 0.25f));
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Dry / Wet", 0.0f, 1.0f, 0.0f));
 
     // Output
     juce::NormalisableRange<float> outputRange(-12.0f, 12.0f, 0.25f);

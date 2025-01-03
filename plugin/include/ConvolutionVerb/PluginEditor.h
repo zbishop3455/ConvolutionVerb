@@ -30,9 +30,13 @@ class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor {
 
     CustomLookAndFeel lookAndFeel;
 
-    juce::Slider inputKnob;
-    juce::Label inputKnobLabel;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> inputKnobAttachment;
+    juce::Slider predelayKnob;
+    juce::Label predelayKnobLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> predelayKnobAttachment;
+
+    juce::Slider decayKnob;
+    juce::Label decayKnobLabel;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayKnobAttachment;
 
     juce::Slider mixKnob;
     juce::Label mixKnobLabel;
