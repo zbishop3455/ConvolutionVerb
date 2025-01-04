@@ -176,8 +176,6 @@ void ConvolutionVerbAudioProcessor::processBlock (juce::AudioBuffer<float>& buff
     dryWetMixer.setWetMixProportion(mix);
     dryWetMixer.pushDrySamples(buffer);
 
-
-
     juce::dsp::AudioBlock<float> block(buffer);
     juce::dsp::ProcessContextReplacing<float> context(block);
 

@@ -29,6 +29,7 @@ target_sources(${PROJECT_NAME}
         ${INCLUDE_DIR}/PluginProcessor.h
         ${INCLUDE_DIR}/ImpulseResponseLoader.h  
         ${INCLUDE_DIR}/CustomLookAndFeel.h
+        ${INCLUDE_DIR}/dsp/ImpulseResponseManager.h
 )
 
 # Sets the include directories of the plugin project.

@@ -12,7 +12,7 @@
 #include "ImpulseResponseLoader.h"
 #include "CustomLookAndFeel.h"
 
-class ConvolutionVerbAudioProcessorEditor  : public juce::AudioProcessorEditor {
+class ConvolutionVerbAudioProcessorEditor : public juce::AudioProcessorEditor {
 
   public:
 

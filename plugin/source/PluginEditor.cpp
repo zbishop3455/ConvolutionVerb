@@ -32,6 +32,9 @@ ConvolutionVerbAudioProcessorEditor::ConvolutionVerbAudioProcessorEditor (Convol
     decayKnobLabel.setText("Decay", juce::dontSendNotification);
     decayKnobLabel.attachToComponent(&decayKnob, false);
 
+    decayKnob.onValueChange = [this] {  };
+
+
 	// Mix knob
     addAndMakeVisible(mixKnob);
     mixKnob.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
